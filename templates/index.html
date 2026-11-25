@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>iPad 2 Kiosk</title>
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Conteneur principal -->
+    <div id="app">
+        <!-- Section Horloge -->
+        <section class="clock-section">
+            <div class="clock-container">
+                <div class="clock-day">{{ current_time.strftime('%A') }}</div>
+                <div class="clock-date">{{ current_time.strftime('%d %B %Y') }}</div>
+                <div class="clock-time">
+                    {{ current_time.strftime('%H:%M:%S') }}
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Météo -->
+        <section class="weather-section" id="weather-section">
+            <div class="weather-container">
+                <h2 class="section-title">Météo</h2>
+                <div class="weather-grid">
+                    <div class="weather-current">
+                        <div class="weather-icon large" id="weather-icon"></div>
+                        <div class="temperature">{{ weather.current.temperature }}°C</div>
+                        <div class="weather-desc">{{ weather.current.condition }}</div>
+                        <div class="feels-like" id="feels-like">Sensation thermique : --°C</div>
+                    </div>
+                    <div class="weather-daily">
+                        <div class="max-temp">{{ weather.daily.max }}°C</div>
+                        <div class="min-temp">{{ weather.daily.min }}°C</div>
+                        <div class="precipitation" id="precipitation">Chances de pluie : --%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Calendrier -->
+        <section class="calendar-section" id="calendar-section">
+            <div class="calendar-container">
+                <h2 class="section-title">Calendrier</h2>
+                <div class="calendar-grid">
+                    <div class="today-display" id="today-display">
+                        <span>Aujourd'hui : {{ current_time.strftime('%A') }}</span>
+                    </div>
+                    <div class="upcoming-events" id="upcoming-events">
+                        <h3>Proximity events</h3>
+                        <ul class="event-list">
+                            <!-- Rempli dynamiquement -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Actualités -->
+        <section class="news-section" id="news-section">
+            <div class="news-container">
+                <h2 class="section-title">Actualités</h2>
+                <div class="news-list" id="news-list">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Système -->
+        <section class="system-section" id="system-section">
+            <div class="system-container">
+                <h2 class="section-title">Système</h2>
+                <div class="system-info">
+                    <div class="info-item" id="uptime">Démarré : --:--</div>
+                    <div class="info-item" id="version">Version : 1.0.0</div>
+                    <div class="info-item" id="clock-sync">Horloge synchro : --:--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bouton Settings -->
+        <button class="settings-button" id="settings-button">
+            <svg class="settings-icon" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.33-0.02-0.64-0.06-0.94l2.01-1.52c0.18-0.14,0.26-0.38,0.22-0.61
+                    c-0.04-0.22-0.19-0.41-0.41-0.49l-2.01-1.52c-0.09-0.7-0.36-1.35-0.78-1.87c0.96-0.67,1.65-1.75,1.78-2.97
+                    c-0.24-0.09-0.51-0.14-0.79-0.14c-0.44,0-0.87,0.14-1.23,0.36L12.62,2.25c-0.24-0.38-0.53-0.72-0.85-1.02
+                    c-0.31-0.29-0.65-0.52-1.02-0.68l-1.83,1.83c-0.23-0.04-0.47-0.06-0.71-0.06c-0.41,0-0.79,0.15-1.09,0.4
+                    c-0.68,0.62-1.18,1.44-1.38,2.38l-2.33,2.33c-0.32,0.07-0.63,0.19-0.91,0.34L1.36,5.85c-0.1-0.26-0.17-0.53-0.17-0.82
+                    c0-0.36,0.14-0.69,0.36-0.93l1.83-1.83c-0.29-0.34-0.52-0.71-0.68-1.12l-1.83,1.83c-0.25,0.3-0.4,0.68-0.4,1.09
+                    c0,0.24,0.02,0.48,0.06,0.71l-2.01,1.52c-0.22,0.08-0.37,0.27-0.41,0.49c-0.04,0.23,0.04,0.47,0.22,0.61l2.01,1.52
+                    c-0.04,0.3-0.06,0.61-0.06,0.94c0,0.33,0.02,0.64,0.06,0.94l-2.01,1.52c-0.18,0.14-0.26,0.38-0.22,0.61
+                    c0.04,0.22,0.19,0.41,0.41,0.49l2.01,1.52c0.09,0.7,0.36,1.35,0.78,1.87c-0.96,0.67-1.65,1.75-1.78,2.97
+                    c0.24,0.09,0.51,0.14,0.79,0.14c0.44,0,0.87,0.14,1.23,0.36l1.83,1.83c0.24,0.38,0.53,0.72,0.85,1.02
+                    c0.31,0.29,0.65,0.52,1.02,0.68l1.83-1.83c0.23,0.04,0.47,0.06,0.71,0.06c0.41,0,0.79-0.15,1.09-0.4
+                    c0.68-0.62,1.18-1.44,1.38-2.38l2.33-2.33c0.32-0.07,0.63-0.19,0.91-0.34l1.52,2.01c0.25,0.3,0.4,0.68,0.4,1.09
+                    c0,0.24-0.02,0.48-0.06,0.71l2.01,1.52c0.22,0.08,0.37,0.27,0.41,0.49c0.04,0.23-0.04,0.47-0.22,0.61l-2.01,1.52
+                    c0.04,0.3,0.06,0.61,0.06,0.94c0,0.33-0.02,0.64-0.06,0.94l2.01,1.52c0.18,0.14,0.26,0.38,0.22,0.61
+                    c-0.04,0.22-0.19,0.41-0.41,0.49l-2.01,1.52c-0.09,0.7-0.36,1.35-0.78,1.87c0.96,0.67,1.65,1.75,1.78,2.97
+                    c-0.24,0.09-0.51,0.14-0.79,0.14c-0.44,0-0.87-0.14-1.23-0.36l-1.83-1.83c-0.24-0.38-0.53-0.72-0.85-1.02
+                    c-0.31-0.29-0.65-0.52-1.02-0.68l-1.83,1.83c-0.23,0.04-0.47,0.06-0.71,0.06c-0.41,0-0.79,0.15-1.09,0.4
+                    c-0.68,0.62-1.18,1.44-1.38,2.38l-2.33,2.33c-0.32,0.07-0.63,0.19-0.91,0.34l-1.52-2.01c-0.25-0.3-0.4-0.68-0.4-1.09
+                    c0-0.24,0.02-0.48,0.06-0.71l-2.01-1.52c-0.22-0.08-0.37-0.27-0.41-0.49c-0.04-0.23,0.04-0.47,0.22-0.61l-2.01-1.52
+                    c-0.04-0.3-0.06-0.61-0.06-0.94c0-0.33,0.02-0.64,0.06-0.94l2.01-1.52c0.18-0.14,0.26-0.38,0.22-0.61
+                    c-0.04-0.22-0.19-0.41-0.41-0.49l-2.01-1.52c-0.09-0.7-0.36-1.35-0.78-1.87c0.96-0.67,1.65-1.75,1.78-2.97
+                    c-0.24-0.09-0.51-0.14-0.79-0.14c-0.44,0-0.87,0.14-1.23,0.36L12.62,17.75c-0.24-0.38-0.53-0.72-0.85-1.02
+                    c-0.31-0.29-0.65-0.52-1.02-0.68l-1.83,1.83c-0.23-0.04-0.47-0.06-0.71-0.06c-0.41,0-0.79,0.15-1.09,0.4
+                    c-0.68,0.62-1.18,1.44-1.38,2.38l-2.33,2.33c-0.32,0.07-0.63,0.19-0.91,0.34l1.52,2.01c0.25,0.3,0.4,0.68,0.4,1.09
+                    c0,0.24-0.02,0.48-0.06,0.71l2.01,1.52c0.22,0.08,0.37,0.27,0.41,0.49c0.04,0.23-0.04,0.47-0.22,0.61l2.01,1.52
+                    c0.09,0.7,0.36,1.35,0.78,1.87c-0.96,0.67-1.65,1.75-1.78,2.97c0.24,0.09,0.51,0.14,0.79,0.14c0.44,0,0.87,0.14,1.23,0.36
+                    l1.83,1.83c0.24,0.38,0.53,0.72,0.85,1.02c0.31,0.29,0.65,0.52,1.02,0.68l1.83-1.83c0.23,0.04,0.47,0.06,0.71,0.06
+                    c0.41,0,0.79-0.15,1.09-0.4c0.68-0.62,1.18-1.44,1.38-2.38l2.33-2.33c0.32-0.07,0.63-0.19,0.91-0.34l-1.52-2.01z"/>
+            </svg>
+        </button>
+
+        <!-- Modal Settings -->
+        <div class="modal-overlay" id="settings-modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Paramètres</h2>
+                <div class="settings-panel">
+                    <form id="config-form" class="config-form">
+                        <div class="form-group">
+                            <label for="city-select">Ville :</label>
+                            <select id="city-select">
+                                <option value="paris">Paris</option>
+                                <option value="london">Londres</option>
+                                <option value="berlin">Berlin</option>
+                                <option value="rome">Rome</option>
+                                <option value="madrid">Madrid</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="units-select">Unités :</label>
+                            <select id="units-select">
+                                <option value="metric">Métrique (°C)</option>
+                                <option value="imperial">Impérial (°F)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weather-lat">Latitude météo :</label>
+                            <input type="number" id="weather-lat" step="0.1" placeholder="48.8566">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weather-lon">Longitude météo :</label>
+                            <input type="number" id="weather-lon" step="0.1" placeholder="2.3522">
+                        </div>
+
+                        <button type="submit" class="save-button">Enregistrer</button>
+                    </form>
+
+                    <div class="system-status">
+                        <h3>Statut Système</h3>
+                        <div id="status-info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/weather.js"></script>
+    <script src="/static/js/calendar.js"></script>
+    <script src="/static/js/news.js"></script>
+    <script src="/static/js/system.js"></script>
+    <script src="/static/js/app.js"></script>
+
+</body>
+</html>

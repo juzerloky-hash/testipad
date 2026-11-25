@@ -1,0 +1,4 @@
+# Dépendances Python - iPad 2 Kiosk
+flask>=1.0.0
+pillow>=8.0.0
+requests>=2.25.0

@@ -1,0 +1,13 @@
+{
+    "timezone": "Europe/Paris",
+    "units": "metric",
+    "weather_lat": 48.8566,
+    "weather_lon": 2.3522,
+    "city": "paris",
+    "news_feeds": [
+        "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+    ],
+    "calendar_url": null,
+    "refresh_interval": 60000,
+    "weather_update_interval": 180000
+}
